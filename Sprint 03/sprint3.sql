@@ -1,13 +1,18 @@
 -- Nivell 1 Exercici 1
 CREATE TABLE credit_card (
-	id VARCHAR(15), 
+	id VARCHAR(15) PRIMARY KEY, 
     iban VARCHAR(34), 
     pan VARCHAR(34), 
     pin VARCHAR(4), 
     cvv VARCHAR(3), 
-    expiring_date DATE,
-    PRIMARY KEY (id)
+    expiring_date DATE
 );
+
+ALTER TABLE transaction
+ADD FOREIGN KEY (credit_card_id) REFERENCES credit_card(id);
+
+SELECT *
+from credit_card;
 
 SELECT *
 from company;
@@ -28,6 +33,13 @@ VALUES ("b-9999");
 SELECT * 
 FROM company
 WHERE id = "b-9999";
+
+INSERT INTO credit_card(id)
+VALUES ("CcU-9999");
+
+SELECT * 
+FROM credit_card
+WHERE id = "CcU-9999";
 
 INSERT INTO transaction (id, credit_card_id, company_id, user_id, lat, longitude, amount, declined)
 VALUES ("108B1D1D-5B23-A76C-55EF-C568E49A99DD", "CcU-9999", "b-9999", 9999, 829.999, 117.999, 111.11, 0);
@@ -94,15 +106,7 @@ CREATE TABLE IF NOT EXISTS user (
         city VARCHAR(150),
         postal_code VARCHAR(100),
         address VARCHAR(255)
-        -- FOREIGN KEY(id) REFERENCES transaction(user_id)   (necesita ser añadida como foreign key desde
-        -- la tabla de transaction no desde la de user.)
     );
-    
-INSERT INTO credit_card (id)
-VALUES ("CcU-9999");
-
-ALTER TABLE transaction
-ADD FOREIGN KEY (credit_card_id) REFERENCES credit_card(id);
 
 INSERT INTO user (id)
 VALUES (9999);
