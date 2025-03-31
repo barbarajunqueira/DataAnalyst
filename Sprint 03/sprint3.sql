@@ -1,10 +1,10 @@
 -- Nivell 1 Exercici 1
 CREATE TABLE credit_card (
-	id VARCHAR(15) PRIMARY KEY, 
-    iban VARCHAR(34), 
-    pan VARCHAR(34), 
-    pin VARCHAR(4), 
-    cvv VARCHAR(3), 
+	id VARCHAR(255) PRIMARY KEY, 
+    iban VARCHAR(255), 
+    pan VARCHAR(255), 
+    pin VARCHAR(255), 
+    cvv VARCHAR(255), 
     expiring_date DATE
 );
 
@@ -14,10 +14,11 @@ ADD FOREIGN KEY (credit_card_id) REFERENCES credit_card(id);
 SELECT *
 from credit_card;
 
-SELECT *
-from company;
-
 -- Nivell 1 Exercici 2
+select *
+from credit_card
+where id = "CcU-2938";
+
 UPDATE credit_card
 SET iban = "R323456312213576817699999"
 WHERE id = "CcU-2938";
@@ -27,12 +28,20 @@ from credit_card
 where id = "CcU-2938";
 
 -- Nivel 1 Exercici 3
+SELECT * 
+FROM company
+WHERE id = "b-9999";
+
 INSERT INTO company (id)
 VALUES ("b-9999");
 
 SELECT * 
 FROM company
 WHERE id = "b-9999";
+
+SELECT * 
+FROM credit_card
+WHERE id = "CcU-9999";
 
 INSERT INTO credit_card(id)
 VALUES ("CcU-9999");
@@ -62,9 +71,11 @@ SELECT *
 FROM transaction
 WHERE id = "02C6201E-D90A-1859-B4EE-88D2986D3B02";
 
+drop view VistaMarketing;
+
 -- Nivell 2 Exercici 2
 CREATE VIEW VistaMarketing AS
-SELECT c.company_name as nomCompanya, c.phone as telefon, c.country as pais, round(avg(amount)) as avgPerCompanya
+SELECT company_name as nomCompanya, phone as telefon, country as pais, round(avg(amount), 2) as avgPerCompanya
 FROM company c
 JOIN transaction t
 WHERE c.id = t.company_id
@@ -81,12 +92,20 @@ WHERE pais = "Germany";
 
 -- Nivell 3 Exercici 1
 -- alterando tabla credit_card
+
+SHOW CREATE TABLE transaction;
+ALTER TABLE transaction DROP FOREIGN KEY transaction_ibfk_5;
+
 ALTER TABLE credit_card
 MODIFY COLUMN id VARCHAR(20),
 MODIFY COLUMN iban VARCHAR(50),
 MODIFY COLUMN cvv INT,
+MODIFY COLUMN pin VARCHAR(4),
 MODIFY COLUMN expiring_date VARCHAR(20),
 ADD COLUMN fecha_actual DATE;
+
+ALTER TABLE transaction
+ADD FOREIGN KEY (credit_card_id) REFERENCES credit_card(id);
 
 -- deletando columna webpage de company
 ALTER TABLE company
@@ -108,8 +127,8 @@ CREATE TABLE IF NOT EXISTS user (
         address VARCHAR(255)
     );
 
-INSERT INTO user (id)
-VALUES (9999);
+SELECT * FROM user
+WHERE id="9999";
 
 ALTER TABLE transaction
 ADD FOREIGN KEY (user_id) REFERENCES user(id);
@@ -120,6 +139,8 @@ ALTER TABLE data_user
 CHANGE COLUMN email personal_email VARCHAR(150);
 
 SELECT * FROM data_user;
+
+-- alterando tabla 
 
 -- Nivell 3 Exercici 2
 CREATE VIEW informetecnico AS
