@@ -77,8 +77,7 @@ drop view VistaMarketing;
 CREATE VIEW VistaMarketing AS
 SELECT company_name as nomCompanya, phone as telefon, country as pais, round(avg(amount), 2) as avgPerCompanya
 FROM company c
-JOIN transaction t
-WHERE c.id = t.company_id
+JOIN transaction t ON c.id = t.company_id
 GROUP BY c.id
 ORDER BY avgPerCompanya;
 

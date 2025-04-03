@@ -208,12 +208,13 @@ FOREIGN KEY (product_ids) REFERENCES transactions_products(transaction_id) ON DE
 
 -- Nivell 1 Exercici 1
 -- Realitza una subconsulta que mostri tots els usuaris amb més de 30 transaccions utilitzant almenys 2 taules.
-SELECT u.name as userName, u.surname as userSurname, count(business_id) as transaccions
-FROM transactions t
-JOIN users u ON t.user_id = u.id
-GROUP BY userName, userSurname
-HAVING count(business_id) > 30
-ORDER BY count(business_id) DESC;
+SELECT u.name AS userName, u.surname AS userSurname, (SELECT SUM(t.amount) FROM transactions t WHERE t.user_id = u.id) AS totalAmount
+FROM users u
+WHERE u.id IN ( SELECT t.user_id
+				FROM transactions t
+				GROUP BY t.user_id
+				HAVING COUNT(t.id) > 30
+);
 
 -- Nivell 1 Exercici 2
 -- Mostra la mitjana d'amount per IBAN de les targetes de crèdit a la companyia Donec Ltd, utilitza almenys 2 taules.
