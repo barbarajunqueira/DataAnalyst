@@ -62,18 +62,9 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n'
 IGNORE 1 LINES
-(@id, @name, @surname, @phone, @email, @birth_date, @country, @city, @postal_code, @address)
+(id, name, surname, phone, email, @birth_date, country, city, postal_code, address)
 SET 
-    id = @id,
-    name = @name,
-    surname = @surname,
-    phone = @phone,
-    email = @email,
-    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y'),  -- Convertiendo la fecha para el formato correcto
-    country = @country,
-    city = @city,
-    postal_code = @postal_code,
-    address = @address;
+    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y');  -- Convertiendo la fecha para el formato correcto
     
 LOAD DATA INFILE '/Users/barbarajunqueira/Desktop/RecursosDataAnalyst/Sprint4/users_uk.csv'
 INTO TABLE users
@@ -81,18 +72,9 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n'
 IGNORE 1 LINES
-(@id, @name, @surname, @phone, @email, @birth_date, @country, @city, @postal_code, @address)
+(id, name, surname, phone, email, @birth_date, country, city, postal_code, address)
 SET 
-    id = @id,
-    name = @name,
-    surname = @surname,
-    phone = @phone,
-    email = @email,
-    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y'), 
-    country = @country,
-    city = @city,
-    postal_code = @postal_code,
-    address = @address;
+    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y');
     
 LOAD DATA INFILE '/Users/barbarajunqueira/Desktop/RecursosDataAnalyst/Sprint4/users_usa.csv'
 INTO TABLE users
@@ -100,18 +82,9 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n'
 IGNORE 1 LINES
-(@id, @name, @surname, @phone, @email, @birth_date, @country, @city, @postal_code, @address)
+(id, name, surname, phone, email, @birth_date, country, city, postal_code, address)
 SET 
-    id = @id,
-    name = @name,
-    surname = @surname,
-    phone = @phone,
-    email = @email,
-    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y'), 
-    country = @country,
-    city = @city,
-    postal_code = @postal_code,
-    address = @address;
+    birth_date = STR_TO_DATE(@birth_date, '%b %d, %Y');
 
 SELECT * FROM users;
 
@@ -171,6 +144,7 @@ SELECT * from transactions;
 CREATE TABLE transactions_products (
     transaction_id VARCHAR(50),
 	product_id INT,
+    PRIMARY KEY (transaction_id, product_id),
 	FOREIGN KEY (transaction_id) REFERENCES transactions(id),
 	FOREIGN KEY (product_id) REFERENCES products(id)
 );
@@ -194,10 +168,10 @@ JOIN
 SELECT * FROM transactions_products;
 
 -- check de se o caminho de transactions até produtos está bem feito:
-SELECT p.id as productIdFromProduct, t.product_ids as productsTransactionsFromTransactions
+SELECT p.id as productIdFromProduct, t.id as transactionsIdFromTransactions
 FROM transactions t
-JOIN transactions_products tp ON t.product_ids = tp.transaction_id
-JOIN products p ON p.id = tp.transaction_id;
+JOIN transactions_products tp ON t.id = tp.transaction_id
+JOIN products p ON p.id = tp.product_id;
 
 -- alterando a tabela de transactions para criar o link com transactions_products -- no he podido y no tiene sentido porque
 -- quiero crear una conexion de many-to-many entonces dejé sin el enlace en el diagrama y esa tabla funciona como
@@ -226,7 +200,7 @@ JOIN companies c ON t.business_id = c.company_id
 WHERE c.company_name = "Donec Ltd";
 
 -- querry en question:
-SELECT avg(amount) as avgAmount, company_name as companyName, card_id as iban
+SELECT ROUND(AVG(amount), 2) as avgAmount, company_name as companyName, card_id as iban
 FROM transactions t
 JOIN companies c ON t.business_id = c.company_id
 WHERE c.company_name = "Donec Ltd"
@@ -240,7 +214,7 @@ WITH lastThreeTransactions AS (
 )
 SELECT card_id,
     CASE 
-        WHEN COUNT(CASE WHEN declined = 1 THEN 1 END) = 3 THEN 'declined' 
+        WHEN SUM(declined) = 3 THEN 'declined' 
         ELSE 'active'
     END AS status
 FROM lastThreeTransactions
